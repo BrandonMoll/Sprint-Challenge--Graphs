@@ -21,7 +21,138 @@ player = Player("Name", world.startingRoom)
 
 
 # FILL THIS IN
-traversalPath = ['n', 's']
+traversalPath = []
+
+class Stack:
+
+    def __init__(self):
+        self.stack = []
+
+    def remove(self):
+        if self.stack:
+            return self.stack.pop()
+        else:
+            return None
+
+    def addItem(self, value):
+        self.stack.append(value)
+
+    def getSize(self):
+        return len(self.stack)
+
+stack = Stack()
+graph = {}
+
+while len(traversalPath) < 2000:
+    currentRoom = player.currentRoom.id
+
+    if currentRoom not in graph:
+        exits = {}
+
+        for exit in player.currentRoom.getExits():
+            exits[exit] = "?"
+
+        graph[currentRoom] = exits
+    
+    exits = graph[currentRoom]
+    
+    if "n" in exits and exits["n"] == "?":
+        player.travel("n")
+        traversalPath.append("n")
+
+        newRoom = player.currentRoom.id
+
+        exits["n"] = newRoom
+
+        if newRoom not in graph:
+            newRoomExits = {}
+
+            for exit in player.currentRoom.getExits():
+                newRoomExits[exit] = "?"
+
+            newRoomExits["s"] = currentRoom
+            graph[newRoom] = newRoomExits
+        else:
+            graph[newRoom]["s"] = currentRoom
+
+        stack.addItem("s")
+
+    elif "s" in exits and exits["s"] == "?":
+        player.travel("s")
+        traversalPath.append("s")
+
+        newRoom = player.currentRoom.id
+
+        exits["s"] = newRoom
+
+        if newRoom not in graph:
+            newRoomExits = {}
+
+            for exit in player.currentRoom.getExits():
+                newRoomExits[exit] = "?"
+
+            newRoomExits["n"] = currentRoom
+            graph[newRoom] = newRoomExits
+        else:
+            graph[newRoom]["n"] = currentRoom
+
+        stack.addItem("n")
+
+    elif "e" in exits and exits["e"] == "?":
+        player.travel("e")
+        traversalPath.append("e")
+
+        newRoom = player.currentRoom.id
+
+        exits["e"] = newRoom
+
+        if newRoom not in graph:
+            newRoomExits = {}
+
+            for exit in player.currentRoom.getExits():
+                newRoomExits[exit] = "?"
+
+            newRoomExits["w"] = currentRoom
+            graph[newRoom] = newRoomExits
+        else:
+            graph[newRoom]["w"] = currentRoom
+
+        stack.addItem("w")
+
+    elif "w" in exits and exits["w"] == "?":
+        player.travel("w")
+        traversalPath.append("w")
+
+        newRoom = player.currentRoom.id
+
+        exits["w"] = newRoom
+
+        if newRoom not in graph:
+            newRoomExits = {}
+
+            for exit in player.currentRoom.getExits():
+                newRoomExits[exit] = "?"
+
+            newRoomExits["e"] = currentRoom
+            graph[newRoom] = newRoomExits
+        else:
+            graph[newRoom]["e"] = currentRoom
+
+        stack.addItem("e")
+
+    else:
+        prev = stack.remove()
+
+        if prev is None:
+            break
+            
+        traversalPath.append(prev)
+        player.travel(prev)
+        
+        
+
+
+
 
 
 # TRAVERSAL TEST
@@ -39,7 +170,6 @@ else:
     print(f"{len(roomGraph) - len(visited_rooms)} unvisited rooms")
 
 
-
 #######
 # UNCOMMENT TO WALK AROUND
 #######
@@ -50,3 +180,4 @@ else:
 #         player.travel(cmds[0], True)
 #     else:
 #         print("I did not understand that command.")
+
